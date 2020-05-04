@@ -1,21 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Hello World</title>
-    <url>/2020/05/03/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener external nofollow noreferrer">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener external nofollow noreferrer">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener external nofollow noreferrer">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener external nofollow noreferrer">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+    <title>浅入隐含波动率</title>
+    <url>/2020/05/04/%E6%B5%85%E5%85%A5%E9%9A%90%E5%90%AB%E6%B3%A2%E5%8A%A8%E7%8E%87/</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer" />
+### [隐含波动率](https://baike.baidu.com/item/%E9%9A%90%E5%90%AB%E6%B3%A2%E5%8A%A8%E7%8E%87/10747683?fr=aladdin)
 
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener external nofollow noreferrer">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>​    <strong>最近需要接触点金融的东西，大概简单记录下学习隐含波动率的笔记。</strong></p>
+<p>简单描述就是由于期权定价模型(如BS模型)给出了期权价格与五个基本参数(标的股价、执行价格、利率、到期时间、波动率)之间的定量关系,只要将其中前4个基本参数及期权的实际市场价格作为已知量代入定价公式，就可以从中解出惟一的未知量，这个大小就是隐含波动率。</p>
+<p>对于标准的欧式权证的理论价格，可以通过B-S公式计算。在B-S公式中，共有权证价格C或P、正股价格S、行权价格X、剩余期限（T-t）、无风险收益率r和波动率σ六个参数。具体公式如下：</p>
+<p>对于认购权证：<br>$$<br>C=S$\cdot N(d{1})-Xe^{-r(T-t)}\cdot N(d{2})<br>$$<br>对于认沽权证：<br>$$<br>P=Xe^{-r(T-t)}\cdot [1-N(d{2})]-S\cdot [1-N(d{1})]<br>$$<br>其中$N{\cdot}$为累计正态概率<br>$$<br>d{1}=\frac{ln(S/X)+(r+\sigma ^{2}/2)(T-t)}{\sigma \sqrt{T-1}}<br>$$</p>
+<p>$$<br>d{2}=d{1}-\sigma \sqrt{T-t}<br>$$</p>
+<p>在这6个参数中，如果知道其中5个参数的值，就可以通过B-S公式求解出第6个参数的值，尽管有的参数得不到明确的解析表达式，但是可以通过数值算法求解。</p>
+<p>所以给定一组输入参数S（当前股票价格）、X（执行价格）、T（以年为单位的有效期）、r（连续复利的无风险利率）和 sigma（股票回报率的标准方差，也称为波动率）可以利用 Black-Scholes-Merton 模型来计算看涨期权的价格，函数命名为 bs.py。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> log, exp, sqrt, stats</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bs_call</span><span class="params">(S, X, T, r, sigma)</span>:</span></span><br><span class="line">    d1 = (log(S/X)+(r+sigma*sigma/<span class="number">2.</span>)*T)/(sigma*sqrt(T))</span><br><span class="line">    d2 = d1-sigma*sqrt(T)</span><br><span class="line">    <span class="keyword">return</span> S*stats.norm.cdf(d1)-X*exp(-r*T)*stats.norm.cdf(d2)</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener external nofollow noreferrer">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>在py的交互模式下运行：</p>
+<p><img src="https://img-blog.csdn.net/20181019220129410?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM0MzU2ODAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="bs_call"></p>
+<p>实际上，找出隐含波动率是基于一个简单的逻辑：试错法。以上面的数值作为例子。有 5 个值 S=40、X=40、T=0.5、 和 c=3.30。用 100 个不同的 sigma 值，加上另外 4 个参数值，可以得到 100 个看涨期权的价格。隐含波动率的一个估计值是这 100 个 sigma 值中使得看涨期权的价格与给定的期权价格 3.30 之间的绝对差值最小的那一个。当然可以增加更多的 sigma 值，以得到更高精度的隐含波动率的估计值，也就是说精确到小数点后更多位。</p>
+<p>或者可以采用另一个收敛标准：当计算得到的看涨期权价格和给定的看涨期权价格之间的绝对差值小于我们自定的一个临界值，比如 1 分钱，即 |c-3.30|&lt;0.01 时，就停止计算。因为随机选取 100 或 1000 个不同的 sigma 值并不是最优的办法，可以使用循环语句来有系统的选择一些 sigma 值。</p>
+<p>另一方面，如果知道 S、X、T、r、和期权价格 c，如何得到相对应的 sigma？</p>
+<h3 id="for-循环计算隐含波动率"><a href="#for-循环计算隐含波动率" class="headerlink" title="for 循环计算隐含波动率"></a>for 循环计算隐含波动率</h3><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> bs_call <span class="keyword">import</span> bs_call</span><br><span class="line">S=<span class="number">40</span>; K=<span class="number">40</span>; T=<span class="number">0.5</span>; r=<span class="number">0.05</span>; c=<span class="number">3.30</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">200</span>):</span><br><span class="line">　　sigma=<span class="number">0.005</span>*(i+<span class="number">1</span>)</span><br><span class="line">　　diff=c-bs_call(S,K,T,r,sigma) </span><br><span class="line">　　<span class="keyword">if</span> abs(diff)&lt;=<span class="number">0.01</span>:</span><br><span class="line">　　　 print(i,sigma, diff)</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener external nofollow noreferrer">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener external nofollow noreferrer">Deployment</a></p>
+
+<p>这个程序的逻辑是使用试错法来为 Black-Scholes-Merton 期权模型提供许多不同的 sigma（波动率）。对于给定的一个 sigma 值，如果计算得到的看涨期权价格和给定的看涨期权价格之间的绝对差值小于 0.01，就停止计算。那个 sigma 值就是隐含波动率。</p>
+<p><img src="https://img-blog.csdn.net/20181019224638997" alt="在这里插入图片描述"></p>
+<p>第1个数字49是变量i在程序结束时的值，0.25是隐含波动率，最后一个数值是计算得到的看涨期权价格和给定的看涨期权价格（即 3.30 美元）之间的绝对差值。</p>
+<h3 id="欧式期权的隐含波动率"><a href="#欧式期权的隐含波动率" class="headerlink" title="欧式期权的隐含波动率"></a>欧式期权的隐含波动率</h3><p>把上面封装成一个计算欧式期权的隐含波动率的函数保存为 vol.py</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> bs <span class="keyword">import</span> bs_call</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">implied_vol_call</span><span class="params">(S,X,T,r,c)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">200</span>):</span><br><span class="line">        sigma=<span class="number">0.005</span>*(i+<span class="number">1</span>)</span><br><span class="line">        diff=c-bs_call(S,X,T,r,sigma)</span><br><span class="line">        <span class="keyword">if</span> abs(diff)&lt;=<span class="number">0.01</span>:</span><br><span class="line">            <span class="keyword">return</span> i,sigma,diff</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdn.net/20181019232015458" alt="在这里插入图片描述"></p>
+<h3 id="看跌期权的隐含波动率"><a href="#看跌期权的隐含波动率" class="headerlink" title="看跌期权的隐含波动率"></a>看跌期权的隐含波动率</h3><p>可以基于期权模型估计欧式看跌期权的隐含波动率写个函数</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> log,exp,sqrt,stats</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">implied_vol_put_min</span><span class="params">(S,X,T,r,p)</span>:</span></span><br><span class="line">    implied_vol=<span class="number">1.0</span>;min_value=<span class="number">0.01</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">10000</span>):</span><br><span class="line">        sigma=<span class="number">0.0001</span>*(i+<span class="number">1</span>)</span><br><span class="line">        d1=(log(S/X)+(r+sigma*sigma/<span class="number">2.</span>)*T)/(sigma*sqrt(T))</span><br><span class="line">        d2 = d1-sigma*sqrt(T)</span><br><span class="line">        put=X*exp(-r*T)*stats.norm.cdf(-d2)-S*stats.norm.cdf(-d1)</span><br><span class="line">        abs_diff=abs(put-p)</span><br><span class="line">        <span class="keyword">if</span> abs_diff&lt;min_value:</span><br><span class="line">            min_value=abs_diff;implied_vol=sigma</span><br><span class="line">            k=i;put_out=put</span><br><span class="line">            print(<span class="string">'k,implied_vol,put,abs_diff'</span>)</span><br><span class="line">            <span class="keyword">return</span> k,implied_vol,put_out,min_value</span><br></pre></td></tr></table></figure>
+
+<p>这个函数和前面两个有些区别，首先，这个函数计算看跌期权的隐含波动率，而不是看涨期权的隐含波动率，最后一个输入值是看跌期权的价格，而不是看涨期权的价格。其次，收敛标准是估计的期权价格和给定的看跌期权价格的绝对价差最小，因此，这个函数将保证一定可以得到一个隐含波动率的估计值而前面的函数不行。<br>先输入一组参数值来估计隐含波动率，然后解释这个函数内在的逻辑。假设 S = 40，X = 40，T = 12 个月，r = 0.1，看跌期权价格为 1.50 美元，结果如下。<br><img src="https://img-blog.csdn.net/20181019233421157" alt="在这里插入图片描述"></p>
+<p>结果显示隐含波动率为 20%。这个算法的逻辑是我们首先为一个名为 min_value 的变量赋一个大的数，如 100。给定参数 sigma 的第 1 个值 0.0002，计算得出近乎为零的看跌期权价格，其与输入的看跌期权价格的绝对价差为 1.50。因为绝对价差小于 100，所以 min_value 变量的值将替换为 1.50。重复这个过程，直到循环结束。最后得到的 min_value 对应的 sigma 值就是隐含波动率。</p>
+<h3 id="使用-while-循环计算隐含波动率"><a href="#使用-while-循环计算隐含波动率" class="headerlink" title="使用 while 循环计算隐含波动率"></a>使用 while 循环计算隐含波动率</h3><p>以下代码使用 while 循环来估计看跌期权的隐含波动率。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> bs_put <span class="keyword">import</span> bs_put</span><br><span class="line"><span class="keyword">import</span> scipy <span class="keyword">as</span> sp </span><br><span class="line">S=<span class="number">40</span>; K=<span class="number">40</span>; T=<span class="number">0.5</span>; r=<span class="number">0.05</span>; p=<span class="number">1.77</span></span><br><span class="line">diff=<span class="number">1</span>; i=<span class="number">1</span>；sigma_old=<span class="number">0.005</span></span><br><span class="line">sign_1=sp.sign(p-bs_put(S,K,T,r,sigma_old)) </span><br><span class="line"><span class="keyword">while</span>(<span class="number">1</span>):</span><br><span class="line">　　sigma=<span class="number">0.0001</span>*(i+<span class="number">1</span>)</span><br><span class="line">　　sign_2=sp.sign(p-bs_put(S,K,T,r,sigma)) </span><br><span class="line">　　i+=<span class="number">1</span></span><br><span class="line">　　<span class="keyword">if</span> sign_1*sign_2&lt;<span class="number">0</span>: </span><br><span class="line">　　　　<span class="keyword">break</span></span><br><span class="line">　　<span class="keyword">else</span>:</span><br><span class="line">　　　　sigma_old=sigma </span><br><span class="line">print(<span class="string">'i, implied-vol, diff'</span>)</span><br><span class="line">print(i,(sigma_old+sigma)/<span class="number">2</span>, diff)</span><br></pre></td></tr></table></figure>
+
+<p>以下的输出结果显示隐含波动率等于 0.2 ，与我们使用 Black-Scholes-Merton 看涨期权模型估计的结果一样。还可以使用 0.2 作为波动率的输入值来计算，从而确定得到相同的期权价格。</p>
+<p><img src="https://img-blog.csdn.net/20181020113728898" alt="在这里插入图片描述"></p>
 ]]></content>
+      <tags>
+        <tag>others</tag>
+      </tags>
   </entry>
 </search>

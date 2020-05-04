@@ -2,11 +2,11 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Pad0y&#39;s Blog</title>
   <icon>https://pad0y.github.io/icon.png</icon>
-  <subtitle>It is not definitely, quantum mechanics</subtitle>
+  <subtitle>Nu11</subtitle>
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://pad0y.github.io/"/>
-  <updated>2020-05-03T14:29:26.889Z</updated>
+  <updated>2020-05-04T14:24:55.374Z</updated>
   <id>https://pad0y.github.io/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Hello World</title>
-    <link href="https://pad0y.github.io/2020/05/03/hello-world/"/>
-    <id>https://pad0y.github.io/2020/05/03/hello-world/</id>
-    <published>2020-05-03T14:29:26.889Z</published>
-    <updated>2020-05-03T14:29:26.889Z</updated>
+    <title>浅入隐含波动率</title>
+    <link href="https://pad0y.github.io/2020/05/04/%E6%B5%85%E5%85%A5%E9%9A%90%E5%90%AB%E6%B3%A2%E5%8A%A8%E7%8E%87/"/>
+    <id>https://pad0y.github.io/2020/05/04/%E6%B5%85%E5%85%A5%E9%9A%90%E5%90%AB%E6%B3%A2%E5%8A%A8%E7%8E%87/</id>
+    <published>2020-05-04T14:11:29.581Z</published>
+    <updated>2020-05-04T14:24:55.374Z</updated>
     
     <summary type="html">
     
@@ -29,13 +29,16 @@
       
         
         
-          &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener external nofollow noreferrer&quot;&gt;Hexo&lt;/a&gt;! This is your very first
+          &lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot; /&gt;
+###
         
       
     
     </summary>
     
     
+    
+      <category term="others" scheme="https://Pad0y.github.io/tags/others/"/>
     
   </entry>
   
