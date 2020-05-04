@@ -4,9 +4,9 @@
     <title>浅入隐含波动率</title>
     <url>/2020/05/04/%E6%B5%85%E5%85%A5%E9%9A%90%E5%90%AB%E6%B3%A2%E5%8A%A8%E7%8E%87/</url>
     <content><![CDATA[<meta name="referrer" content="no-referrer" />
-### [隐含波动率](https://baike.baidu.com/item/%E9%9A%90%E5%90%AB%E6%B3%A2%E5%8A%A8%E7%8E%87/10747683?fr=aladdin)
 
-<p>​    <strong>最近需要接触点金融的东西，大概简单记录下学习隐含波动率的笔记。</strong></p>
+
+<h3 id="隐含波动率"><a href="#隐含波动率" class="headerlink" title="隐含波动率"></a><a href="https://baike.baidu.com/item/%E9%9A%90%E5%90%AB%E6%B3%A2%E5%8A%A8%E7%8E%87/10747683?fr=aladdin" target="_blank" rel="noopener external nofollow noreferrer">隐含波动率</a></h3><p>​<strong>最近需要接触点金融的东西，大概简单记录下学习隐含波动率的笔记。</strong></p>
 <p>简单描述就是由于期权定价模型(如BS模型)给出了期权价格与五个基本参数(标的股价、执行价格、利率、到期时间、波动率)之间的定量关系,只要将其中前4个基本参数及期权的实际市场价格作为已知量代入定价公式，就可以从中解出惟一的未知量，这个大小就是隐含波动率。</p>
 <p>对于标准的欧式权证的理论价格，可以通过B-S公式计算。在B-S公式中，共有权证价格C或P、正股价格S、行权价格X、剩余期限（T-t）、无风险收益率r和波动率σ六个参数。具体公式如下：</p>
 <p>对于认购权证：<br>$$<br>C=S$\cdot N(d{1})-Xe^{-r(T-t)}\cdot N(d{2})<br>$$<br>对于认沽权证：<br>$$<br>P=Xe^{-r(T-t)}\cdot [1-N(d{2})]-S\cdot [1-N(d{1})]<br>$$<br>其中$N{\cdot}$为累计正态概率<br>$$<br>d{1}=\frac{ln(S/X)+(r+\sigma ^{2}/2)(T-t)}{\sigma \sqrt{T-1}}<br>$$</p>
